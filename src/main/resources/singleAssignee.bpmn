@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:activiti="http://activiti.org/bpmn" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.activiti.org/test" exporter="Camunda Modeler" exporterVersion="3.1.2">
+  <process id="singleAssignee" name="单个受理人" isExecutable="true">
+    <startEvent id="startevent1" name="Start">
+      <outgoing>Flow_0</outgoing>
+    </startEvent>
+    <endEvent id="endevent1" name="End">
+      <incoming>SequenceFlow_0yqz6i3</incoming>
+    </endEvent>
+    <userTask id="usertask1" name="User Task1">
+	 <extensionElements>
+	 	<activiti:taskListener class="com.ibm.vms.TaskListener.TaskListenerImpl" event="create" />
+	 </extensionElements>
+    </userTask>
+    <userTask id="usertask2" name="User Task2" activiti:assignee="#{user2}">
+      <outgoing>SequenceFlow_0hhed00</outgoing>
+    </userTask>
+    <sequenceFlow id="flow1" sourceRef="usertask1" targetRef="usertask2" />
+    <sequenceFlow id="Flow_0" sourceRef="startevent1" targetRef="usertask1" />
+    <serviceTask id="Task_0jc3can" name="修改请假单状态" activiti:delegateExpression="${myDelegate}">
+      <incoming>SequenceFlow_0hhed00</incoming>
+      <outgoing>SequenceFlow_0yqz6i3</outgoing>
+    </serviceTask>
+    <sequenceFlow id="SequenceFlow_0hhed00" sourceRef="usertask2" targetRef="Task_0jc3can" />
+    <sequenceFlow id="SequenceFlow_0yqz6i3" sourceRef="Task_0jc3can" targetRef="endevent1" />
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_singleAssignee">
+    <bpmndi:BPMNPlane id="BPMNPlane_singleAssignee" bpmnElement="singleAssignee">
+      <bpmndi:BPMNShape id="BPMNShape_startevent1" bpmnElement="startevent1">
+        <omgdc:Bounds x="189" y="96" width="35" height="35" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="195" y="72" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_endevent1" bpmnElement="endevent1">
+        <omgdc:Bounds x="189" y="508" width="35" height="35" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="197" y="543" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_usertask1" bpmnElement="usertask1">
+        <omgdc:Bounds x="155" y="190" width="105" height="55" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_usertask2" bpmnElement="usertask2">
+        <omgdc:Bounds x="154" y="275" width="105" height="55" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_flow2" bpmnElement="flow1">
+        <omgdi:waypoint x="207" y="245" />
+        <omgdi:waypoint x="207" y="260" />
+        <omgdi:waypoint x="206" y="260" />
+        <omgdi:waypoint x="206" y="275" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_07fiprk_di" bpmnElement="Flow_0">
+        <omgdi:waypoint x="207" y="131" />
+        <omgdi:waypoint x="207" y="161" />
+        <omgdi:waypoint x="208" y="161" />
+        <omgdi:waypoint x="208" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1bgdobt_di" bpmnElement="Task_0jc3can">
+        <omgdc:Bounds x="157" y="372" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0hhed00_di" bpmnElement="SequenceFlow_0hhed00">
+        <omgdi:waypoint x="207" y="330" />
+        <omgdi:waypoint x="207" y="372" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0yqz6i3_di" bpmnElement="SequenceFlow_0yqz6i3">
+        <omgdi:waypoint x="207" y="452" />
+        <omgdi:waypoint x="207" y="508" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
