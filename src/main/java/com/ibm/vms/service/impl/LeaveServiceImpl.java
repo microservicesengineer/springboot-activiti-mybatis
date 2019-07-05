@@ -9,10 +9,13 @@ import java.util.UUID;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.ibm.vms.service.ChangeStatus;
 import com.ibm.vms.service.LeaveService;
 import com.ibm.vms.dao.auto.leave_infoMapper;
 import com.ibm.vms.entity.auto.leave_info;
@@ -28,21 +31,17 @@ public class LeaveServiceImpl implements LeaveService{
 	private RuntimeService runtimeService;
 	@Autowired
 	private RepositoryService repositoryService;
-
+	@Autowired
+	private ChangeStatus changeStatus;
 	@Override
 	public leave_info addLeaveAInfo(String msg) {
-		repositoryService.createDeployment().addClasspathResource("singleAssignee.bpmn").deploy();
+		repositoryService.createDeployment().addClasspathResource("leaveprocess.bpmn20.xml").deploy();
 		//第一个参数是指定启动流程的id,即要启动哪个流程 ;第二个参数是指业务id
+		//d
 		System.out.println("启动前-----");
-//	    Map<String, Object> variables = new HashMap<>();
-//	    List<String> userList = new ArrayList<>();
-//        userList.add("1");
-//        userList.add("2");
-//        userList.add("3");
-//        variables.put("userList", userList);
 	    String id = UUID.randomUUID().toString();
-	    //ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("leaveProcess", bizKey,variables);
-	    ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("singleAssignee",id);
+	    ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("leaveprocess",id);
+	    List<Task> list = taskService.createTaskQuery().taskAssignee("2").list();
 	    leave_info leaveInfo = new leave_info();
 		leaveInfo.setLeavemsg(msg);
 		leaveInfo.setId(id);
@@ -89,12 +88,9 @@ public class LeaveServiceImpl implements LeaveService{
 		 //1、认领任务
 		 taskService.claim(taskId, userId);
 		//2.完成任务
-		 if (audit=="0") {
-			 taskService.complete(taskId);
-		}else {
-			 map.put("user2",audit);
+
+			 map.put("audit",audit);
 			 taskService.complete(taskId, map);
-		}
 		 
 	}
 	@Override
@@ -102,6 +98,17 @@ public class LeaveServiceImpl implements LeaveService{
 		taskService.addCandidateUser(taskId, userId);
 	}
 
+	public void changeStatus(DelegateExecution execution,String status) {
+		
+		String key = execution.getProcessInstanceBusinessKey();
+		//LeaveInfo entity = new LeaveInfo();
+		leave_info entity = leaveMapper.selectByPrimaryKey(key);
+		entity.setStatus(status);
+		leaveMapper.updateByPrimaryKey(entity);
+		
+	//	System.out.println("修改请假单状态为：" + status);
+		
+	}
 
 
 }

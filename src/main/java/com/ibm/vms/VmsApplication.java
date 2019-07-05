@@ -5,7 +5,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication(exclude = SecurityAutoConfiguration.class)
+@SpringBootApplication(scanBasePackages = "com.ibm.vms",exclude = SecurityAutoConfiguration.class)
 @MapperScan(basePackages = "com.ibm.vms.dao.auto")
 public class VmsApplication {
 

@@ -1,14 +1,15 @@
 package com.ibm.vms.TaskListener;
 
-import org.activiti.engine.delegate.DelegateTask;
-import org.activiti.engine.delegate.TaskListener;
+import java.util.Arrays;
 
-public class TaskListenerImpl implements TaskListener{
-	@Override
-	public void notify(DelegateTask delegateTask) {
-		//指定组任务
-		delegateTask.addCandidateUser("1");
-		delegateTask.addCandidateUser("2");
+import org.activiti.engine.delegate.DelegateExecution;
+import org.activiti.engine.delegate.DelegateTask;
+import org.activiti.engine.delegate.JavaDelegate;
+
+public class TaskListenerImpl implements JavaDelegate {  
+    @Override  
+    public void execute(DelegateExecution execution) {  
+        execution.setVariable("pers", Arrays.asList("1", "2"));  
 
 }
 }

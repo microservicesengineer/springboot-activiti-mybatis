@@ -26,7 +26,7 @@ import com.ibm.vms.config.EventListener;
 
 @Configuration
 @EnableTransactionManagement
-@MapperScan("com.activiti6.demo.mapper")
+@MapperScan("com.ibm.vms.dao.auto")
 public class ActivitiConfig  {
 
     @Autowired

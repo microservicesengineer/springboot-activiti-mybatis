@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+
 import com.ibm.vms.entity.auto.leave_info;
 import com.ibm.vms.service.LeaveService;
 
@@ -14,6 +15,7 @@ import com.ibm.vms.service.LeaveService;
 public class Controller {
     @Autowired
     private LeaveService leaveService;
+
     /**
      * 发起申请，新增信息
      *
