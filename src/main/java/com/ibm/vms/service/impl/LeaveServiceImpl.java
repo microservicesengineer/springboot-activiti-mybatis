@@ -15,7 +15,6 @@ import org.activiti.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ibm.vms.service.ChangeStatus;
 import com.ibm.vms.service.LeaveService;
 import com.ibm.vms.dao.auto.leave_infoMapper;
 import com.ibm.vms.entity.auto.leave_info;
@@ -31,8 +30,7 @@ public class LeaveServiceImpl implements LeaveService{
 	private RuntimeService runtimeService;
 	@Autowired
 	private RepositoryService repositoryService;
-	@Autowired
-	private ChangeStatus changeStatus;
+
 	@Override
 	public leave_info addLeaveAInfo(String msg) {
 		repositoryService.createDeployment().addClasspathResource("leaveprocess.bpmn20.xml").deploy();
