@@ -1,5 +1,8 @@
 package com.ibm.vms.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,16 @@ public class UserTaskController implements UserTaskManagmentApi{
 	@Override
 	public ResponseEntity<StandardResponse> completeTask(@Valid CompleteTaskReqVO completeTaskReqVO) {
 		// TODO Auto-generated method stub
+        Map<String, Object> param = new HashMap<>();
+        param.put("isFinish", false);//流程是否完成
+        
+        if (completeTaskReqVO.getIsReviewPass() == 1) {
+            activitiService.completeTask(completeTaskReqVO.getTaskId(), completeTaskReqVO.getAssignee(), completeTaskReqVO.getVariables(), param);
+        }
+
+        if (completeTaskReqVO.getIsReviewPass() == 0) {//驳回
+            activitiService.rejectTask(completeTaskReqVO.getTaskId(), completeTaskReqVO.getAssignee(), completeTaskReqVO.getReturnStart() == 1);
+        }
 		return UserTaskManagmentApi.super.completeTask(completeTaskReqVO);
 	}
 

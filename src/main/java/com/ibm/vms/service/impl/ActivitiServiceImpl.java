@@ -3,6 +3,9 @@ package com.ibm.vms.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.bpmn.model.BpmnModel;
+import org.activiti.bpmn.model.FlowNode;
+import org.activiti.engine.ActivitiException;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.ManagementService;
@@ -10,14 +13,17 @@ import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.activiti6.demo.service.impl.ActivitiServiceImpl;
+import com.activiti6.demo.service.impl.ActivitiServiceImpl.DeleteTaskCmd;
+import com.activiti6.demo.service.impl.ActivitiServiceImpl.SetFLowNodeAndGoCmd;
 import com.ibm.vms.service.ActivitiService;
 
 
@@ -189,5 +195,69 @@ public class ActivitiServiceImpl implements ActivitiService{
         if (task != null) {
             param.put("isFinish", isFinishProcess(task.getProcessInstanceId()));
         }
+    }
+    @Override
+    public void rejectTask(String taskId, String assignee, boolean returnStart) {
+        jump(this, taskId, assignee, returnStart);
+    }
+    //跳转方法
+    public void jump(ActivitiServiceImpl activitiService, String taskId, String assignee, boolean returnStart) {
+        //当前任务
+        Task currentTask = activitiService.taskService.createTaskQuery().taskId(taskId).singleResult();
+        //获取流程定义
+//        Process process = activitiService.repositoryService.getBpmnModel(currentTask.getProcessDefinitionId()).getMainProcess();
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(currentTask.getProcessDefinitionId());
+
+
+        List<HistoricActivityInstance> list = historyService.createHistoricActivityInstanceQuery().processInstanceId(currentTask.getProcessInstanceId()).activityType("userTask").finished().orderByHistoricActivityInstanceEndTime().asc().list();
+        if (list == null || list.size() == 0) {
+            throw new ActivitiException("操作历史流程不存在");
+        }
+
+        //获取目标节点定义
+        FlowNode targetNode = null;
+
+        if (returnStart) {//驳回到发起点
+
+            targetNode = (FlowNode) bpmnModel.getMainProcess().getFlowElement(list.get(0).getActivityId());
+        } else {//驳回到上一个节点
+
+            FlowNode currNode = (FlowNode) bpmnModel.getMainProcess().getFlowElement(currentTask.getTaskDefinitionKey());
+
+            for (int i = 0; i < list.size(); i++) {//倒序审核任务列表，最后一个不与当前节点相同的节点设置为目标节点
+                FlowNode lastNode = (FlowNode) bpmnModel.getMainProcess().getFlowElement(list.get(i).getActivityId());
+                if (list.size() > 0 && currNode.getId().equals(lastNode.getId())) {
+                    targetNode = (FlowNode) bpmnModel.getMainProcess().getFlowElement(list.get(i - 1).getActivityId());
+                    break;
+                }
+            }
+
+            if (targetNode == null && list.size() > 0) {
+                targetNode = (FlowNode) bpmnModel.getMainProcess().getFlowElement(list.get(list.size() - 1).getActivityId());
+            }
+
+
+//            Map<String, Object> flowElementMap = new TreeMap<>();
+//            Collection<FlowElement> flowElements = bpmnModel.getMainProcess().getFlowElements();
+//            for (FlowElement flowElement : flowElements) {
+//
+//                flowElementMap.put(flowElement.getId(), flowElement);
+//            }
+//
+//
+//
+//            targetNode = (FlowNode) bpmnModel.getMainProcess().getFlowElement(tmplist.get(tmplist.size() - 1).getActivityId());
+
+        }
+
+        if (targetNode == null) {
+            throw new ActivitiException("开始节点不存在");
+        }
+
+
+        //删除当前运行任务
+        String executionEntityId = activitiService.managementService.executeCommand(activitiService.new DeleteTaskCmd(currentTask.getId()));
+        //流程执行到来源节点
+        activitiService.managementService.executeCommand(activitiService.new SetFLowNodeAndGoCmd(targetNode, executionEntityId));
     }
 }
