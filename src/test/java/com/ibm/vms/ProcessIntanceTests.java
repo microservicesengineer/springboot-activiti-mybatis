@@ -1,6 +1,5 @@
 package com.ibm.vms;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.Before;
@@ -13,14 +12,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.vms.model.StartProcessInstanceReqVO;
 
 @RunWith(SpringRunner.class)
@@ -54,20 +50,9 @@ public class ProcessIntanceTests {
 		voStart.setBusinessKey("100");
 		voStart.setInstanceKey("leaveprocess");
 
-		mockMvc.perform(MockMvcRequestBuilders.post("/processInstance").content(asJsonString(voStart))
-				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated());
+		mockMvc.perform(MockMvcRequestBuilders.post("/processInstance")
+				.content(mMapper.writeValueAsString(voStart))
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isCreated());
 	}
-
-	public static String asJsonString(final Object obj) {
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-//			mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-//			ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-//			System.out.print(ow.writeValueAsString(obj));
-			return mapper.writeValueAsString(obj);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 }
