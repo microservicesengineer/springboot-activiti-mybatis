@@ -2,12 +2,8 @@ package com.ibm.vms.service;
 
 import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
 
 import org.activiti.engine.repository.Deployment;
-import org.activiti.engine.runtime.ProcessInstance;
-
-import com.ibm.vms.service.impl.ProcessDefinitionServiceImpl;
 
 public interface ProcessDefinitionService {
 	

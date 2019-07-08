@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ibm.vms.dao.auto.leave_infoMapper">
-  <resultMap id="BaseResultMap" type="com.ibm.vms.entity.auto.leave_info">
+  <resultMap id="BaseResultMap" type="com.ibm.vms.entity.db.leave_info">
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="leaveMsg" jdbcType="VARCHAR" property="leavemsg" />

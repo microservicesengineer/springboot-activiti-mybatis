@@ -26,11 +26,12 @@ import com.ibm.vms.config.EventListener;
 
 @Configuration
 @EnableTransactionManagement
-@MapperScan("com.ibm.vms.dao.auto")
+@MapperScan("com.ibm.vms.dao.mapper")
 public class ActivitiConfig  {
 
     @Autowired
     private DataSource dataSource;
+    
     @Autowired
     private EventListener eventListener;
 
@@ -57,7 +58,7 @@ public class ActivitiConfig  {
     }
 
     /**
-     * 初始化配置，创建流程引擎表
+     * Process Engine
      *
      * @return
      */
@@ -67,7 +68,7 @@ public class ActivitiConfig  {
     }
 
     /**
-     * 仓库服务
+     * Repository Service
      *
      * @return
      */
@@ -77,7 +78,7 @@ public class ActivitiConfig  {
     }
 
     /**
-     * 运行时服务
+     * Runtime Service
      *
      * @return
      */
@@ -87,7 +88,7 @@ public class ActivitiConfig  {
     }
 
     /**
-     * 表单服务
+     * Form Service
      *
      * @return
      */
@@ -97,7 +98,7 @@ public class ActivitiConfig  {
     }
 
     /**
-     * 任务服务
+     * Task Service
      *
      * @return
      */
@@ -107,7 +108,7 @@ public class ActivitiConfig  {
     }
 
     /**
-     * 历史服务
+     * History Service
      *
      * @return
      */
@@ -117,7 +118,7 @@ public class ActivitiConfig  {
     }
 
     /**
-     * 认证服务
+     * Identity Service
      *
      * @return
      */
@@ -127,7 +128,7 @@ public class ActivitiConfig  {
     }
 
     /**
-     * 管理服务
+     * managment service
      *
      * @return
      */

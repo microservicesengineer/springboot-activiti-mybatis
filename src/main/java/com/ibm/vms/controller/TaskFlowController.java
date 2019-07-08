@@ -47,7 +47,7 @@ public class TaskFlowController implements FlowtaskApi {
 	@Override
 	public ResponseEntity<StandardResponse> completeTask(@Valid CompleteTaskReqVO completeTaskReqVO) {
 		Map<String, Object> param = new HashMap<>();
-		param.put("isFinish", false);// 流程是否完成
+		param.put("isFinish", false);// the flow is completed?
 		try {
 			if (completeTaskReqVO.getIsReviewPass() == 1) { // pass the process
 				mTaskFlowService.completeTask(completeTaskReqVO.getTaskId(), completeTaskReqVO.getAssignee(),

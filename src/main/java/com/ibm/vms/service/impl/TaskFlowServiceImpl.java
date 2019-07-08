@@ -12,6 +12,7 @@ import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
+import org.activiti.engine.task.TaskQuery;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ import com.ibm.vms.service.TaskFlowService;
 public class TaskFlowServiceImpl implements TaskFlowService {
 
 	@Autowired
-	ProcessEngine mProcessEngine;
+	ProcessEngine processEngine;
 
 	@Autowired
 	RepositoryService mRepositoryService;
@@ -46,8 +47,21 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 	@Override
 	public List queryTask(String assignee, String candidateUser, String candidateGroup, int firstResult,
 			int maxResults) {
-		// TODO Auto-generated method stub
-		return null;
+		TaskQuery taskQuery = mTaskService.createTaskQuery();
+
+        if (!StringUtils.isBlank(assignee)) {
+            taskQuery.taskAssignee(assignee);
+        }
+
+        if (!StringUtils.isBlank(candidateUser)) {
+            taskQuery.taskCandidateUser(candidateUser);
+        }
+        if (!StringUtils.isBlank(candidateGroup)) {
+            taskQuery.taskCandidateGroup(candidateGroup);
+        }
+
+        List<Task> tasks = taskQuery.listPage(firstResult, maxResults);
+        return tasks;
 	}
 
 	@Override
@@ -100,7 +114,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 	@Override
 	public boolean isFinishProcess(String processInstanceId) {
 		/** 判断流程是否结束，查询正在执行的执行对象表 */
-		ProcessInstance rpi = mProcessEngine.getRuntimeService()//
+		ProcessInstance rpi = processEngine.getRuntimeService()//
 				.createProcessInstanceQuery()// 创建流程实例查询对象
 				.processInstanceId(processInstanceId).singleResult();
 
