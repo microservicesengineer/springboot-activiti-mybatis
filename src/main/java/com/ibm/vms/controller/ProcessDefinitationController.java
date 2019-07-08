@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ibm.vms.service.ProcessDefinitionService;
@@ -18,6 +19,7 @@ import com.ibm.vms.util.HttpResponseBuilder;
 import com.vms.controller.ProcessdefinitionApi;
 import com.vms.model.StandardResponse;
 
+@RestController
 public class ProcessDefinitationController implements ProcessdefinitionApi {
 	@Autowired
 	ProcessDefinitionService mProcessDefinitionService;

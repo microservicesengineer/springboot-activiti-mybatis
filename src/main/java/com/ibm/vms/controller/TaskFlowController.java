@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.ibm.vms.service.TaskFlowService;
 import com.ibm.vms.util.HttpResponseBuilder;
@@ -18,6 +19,7 @@ import com.vms.model.CompleteTaskReqVO;
 import com.vms.model.QueryTaskReqVO;
 import com.vms.model.StandardResponse;
 
+@RestController
 public class TaskFlowController implements FlowtaskApi {
 
 	@Autowired

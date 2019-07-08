@@ -6,6 +6,7 @@ import org.activiti.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.ibm.vms.service.ProcessInstanceService;
 import com.ibm.vms.util.HttpResponseBuilder;
@@ -13,6 +14,7 @@ import com.vms.controller.ProcessinstanceApi;
 import com.vms.model.StandardResponse;
 import com.vms.model.StartProcessInstanceReqVO;
 
+@RestController
 public class ProcessionInstanceController implements ProcessinstanceApi{
 
     @Autowired
