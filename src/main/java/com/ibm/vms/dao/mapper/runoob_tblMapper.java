@@ -1,9 +1,10 @@
-package com.ibm.vms.dao.auto;
+package com.ibm.vms.dao.mapper;
 
-import com.ibm.vms.entity.auto.runoob_tbl;
-import com.ibm.vms.entity.auto.runoob_tblExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import com.ibm.vms.entity.db.runoob_tbl;
+import com.ibm.vms.entity.db.runoob_tblExample;
 
 public interface runoob_tblMapper {
     int deleteByExample(runoob_tblExample example);

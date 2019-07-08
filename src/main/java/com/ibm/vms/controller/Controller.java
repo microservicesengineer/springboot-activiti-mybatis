@@ -7,8 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-
-import com.ibm.vms.entity.auto.leave_info;
+import com.ibm.vms.entity.db.leave_info;
 import com.ibm.vms.service.LeaveService;
 
 @RestController

@@ -1,6 +1,6 @@
-package com.ibm.vms.dao.auto;
+package com.ibm.vms.dao.mapper;
 
-import com.ibm.vms.entity.auto.leave_info;
+import com.ibm.vms.entity.db.leave_info;
 
 public interface leave_infoMapper {
     int deleteByPrimaryKey(String id);

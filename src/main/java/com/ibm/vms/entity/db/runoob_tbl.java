@@ -1,4 +1,4 @@
-package com.ibm.vms.entity.auto;
+package com.ibm.vms.entity.db;
 
 public class runoob_tbl {
     private Integer id;

@@ -16,8 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ibm.vms.service.LeaveService;
-import com.ibm.vms.dao.auto.leave_infoMapper;
-import com.ibm.vms.entity.auto.leave_info;
+import com.ibm.vms.dao.mapper.leave_infoMapper;
+import com.ibm.vms.entity.db.leave_info;
 
 
 @Service

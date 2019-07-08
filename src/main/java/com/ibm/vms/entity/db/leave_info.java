@@ -1,4 +1,4 @@
-package com.ibm.vms.entity.auto;
+package com.ibm.vms.entity.db;
 
 public class leave_info {
     private String id;
