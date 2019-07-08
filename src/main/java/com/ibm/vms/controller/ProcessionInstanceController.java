@@ -1,63 +1,57 @@
 package com.ibm.vms.controller;
 
-import java.util.Map;
-
 import javax.validation.Valid;
 
 import org.activiti.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.ibm.vms.service.ActivitiService;
-import com.vms.controller.ProcessInstanceManagmentApi;
-import com.vms.model.InlineResponse2002;
-import com.vms.model.InlineResponse2003;
-import com.vms.model.ProcessInstanceEntity;
+import com.ibm.vms.service.ProcessInstanceService;
+import com.ibm.vms.util.HttpResponseBuilder;
+import com.vms.controller.ProcessinstanceApi;
 import com.vms.model.StandardResponse;
 import com.vms.model.StartProcessInstanceReqVO;
 
-public class ProcessionInstanceController implements ProcessInstanceManagmentApi{
+public class ProcessionInstanceController implements ProcessinstanceApi{
 
     @Autowired
-    ActivitiService activitiService;
-	
+    ProcessInstanceService mProcessInstanceService;
+
 	@Override
-	public ResponseEntity<StandardResponse> createProcessInstance(
-			@Valid StartProcessInstanceReqVO startProcessInstanceReq) {
-		// TODO Auto-generated method stub
-        Map<String, Object> variables = startProcessInstanceReq.getVariables();//流程配置参数
-        variables.put("applyUserId", startProcessInstanceReq.getApplyUserId());//流程发起人
-        ProcessInstance processInstance = activitiService.startProcessInstance(startProcessInstanceReq.getInstanceKey(), startProcessInstanceReq.getBusinessKey(), variables);
-		return ProcessInstanceManagmentApi.super.createProcessInstance(startProcessInstanceReq);
+	public ResponseEntity<StandardResponse> createProcessInstance(@Valid StartProcessInstanceReqVO body) {
+		try {
+			ProcessInstance instance = mProcessInstanceService.startProcessInstance(body.getInstanceKey(), body.getBusinessKey(), body.getVariables());
+			return HttpResponseBuilder.success(HttpStatus.OK.value(), "create instance success", instance);
+		} catch(Exception e) {
+			return HttpResponseBuilder.fail(HttpStatus.BAD_REQUEST.value(), e.getMessage(), null);
+		}
 	}
 
 	@Override
 	public ResponseEntity<StandardResponse> deleteProcessInstanceByID(String id) {
 		// TODO Auto-generated method stub
-		activitiService.deleteProcessInstanceById(id);
-		return ProcessInstanceManagmentApi.super.deleteProcessInstanceByID(id);
+		return ProcessinstanceApi.super.deleteProcessInstanceByID(id);
 	}
 
 	@Override
-	public ResponseEntity<ProcessInstanceEntity> queryProcessInstanceByID(String id) {
+	public ResponseEntity<StandardResponse> queryProcessInstanceByID(String id) {
 		// TODO Auto-generated method stub
-		activitiService.queryProcessInstanceById(id);
-		return ProcessInstanceManagmentApi.super.queryProcessInstanceByID(id);
+		return ProcessinstanceApi.super.queryProcessInstanceByID(id);
 	}
 
 	@Override
-	public ResponseEntity<InlineResponse2002> queryProcessInstanceByKey(String key) {
+	public ResponseEntity<StandardResponse> queryProcessInstanceByKey(String key) {
 		// TODO Auto-generated method stub
-		activitiService.queryProcessInstanceByKey(key);
-		return ProcessInstanceManagmentApi.super.queryProcessInstanceByKey(key);
+		return ProcessinstanceApi.super.queryProcessInstanceByKey(key);
 	}
 
 	@Override
-	public ResponseEntity<InlineResponse2003> queryTaskHistoricalDataByID(Integer id) {
+	public ResponseEntity<StandardResponse> queryTaskHistoricalDataByID(Integer id) {
 		// TODO Auto-generated method stub
-		return ProcessInstanceManagmentApi.super.queryTaskHistoricalDataByID(id);
+		return ProcessinstanceApi.super.queryTaskHistoricalDataByID(id);
 	}
-
-
+	
+	
 
 }
