@@ -3,20 +3,9 @@
   <process id="leaveprocess" name="请假流程" isExecutable="true">
     <startEvent id="startevent1" name="start"></startEvent>
     <serviceTask id="servicetask1" name="修改请假单状态（ing）" activiti:expression="${leaveService.changeStatus(execution,'ing')}"></serviceTask>
-    <serviceTask id="servicetask2" name="修改请假单状态（pass）" activiti:expression="${leaveService.changeStatus(execution,'pass')}"></serviceTask>
-    <serviceTask id="servicetask3" name="修改请假单状态（reject）" activiti:expression="${leaveService.changeStatus(execution,'reject')}"></serviceTask>
-    <userTask id="usertask1" name="项目经理审批" activiti:assignee="#{per}">
-      <extensionElements>
-        <activiti:taskListener event="create" class="com.ibm.vms.TaskListener.AssignCandidateUsersListenerImp">
-          <activiti:field name="category">
-            <activiti:string><![CDATA[leave]]></activiti:string>
-          </activiti:field>
-          <activiti:field name="group">
-            <activiti:string><![CDATA[managers]]></activiti:string>
-          </activiti:field>
-        </activiti:taskListener>
-        <modeler:initiator-can-complete xmlns:modeler="http://activiti.com/modeler"><![CDATA[false]]></modeler:initiator-can-complete>
-      </extensionElements>
+    <serviceTask id="servicetask2" name="修改请假单状态（pass）" activiti:delegateExpression="${changeStatus}"></serviceTask>
+    <serviceTask id="servicetask3" name="修改请假单状态（reject）" activiti:delegateExpression="${changeStatus}"></serviceTask>
+    <userTask id="usertask1" name="项目经理审批">
       <multiInstanceLoopCharacteristics isSequential="false" activiti:collection="pers" activiti:elementVariable="per">
         <completionCondition>${nrOfCompletedInstances/nrOfInstances == 1}</completionCondition>
       </multiInstanceLoopCharacteristics>
@@ -30,10 +19,10 @@
     <exclusiveGateway id="exclusivegateway2" name="exclusivegateway2"></exclusiveGateway>
     <endEvent id="endevent1" name="end"></endEvent>
     <sequenceFlow id="sid-9120AFD5-A3A7-46B7-B799-13B58F33BBE7" sourceRef="servicetask2" targetRef="endevent1"></sequenceFlow>
-    <sequenceFlow id="flow0" sourceRef="startevent1" targetRef="servicetask1"></sequenceFlow>
+    <sequenceFlow id="flow2" sourceRef="usertask1" targetRef="exclusivegateway1"></sequenceFlow>
     <sequenceFlow id="flow5" sourceRef="usertask2" targetRef="exclusivegateway2"></sequenceFlow>
     <sequenceFlow id="flow8" sourceRef="servicetask3" targetRef="endevent1"></sequenceFlow>
-    <sequenceFlow id="flow4" name="reject" sourceRef="exclusivegateway1" targetRef="servicetask3">
+    <sequenceFlow id="flow7" name="reject" sourceRef="exclusivegateway2" targetRef="servicetask3">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${audit=='reject'}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="flow3" name="pass" sourceRef="exclusivegateway1" targetRef="usertask2">
@@ -42,39 +31,32 @@
     <sequenceFlow id="flow6" name="pass" sourceRef="exclusivegateway2" targetRef="servicetask2">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${audit=='pass'}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="flow7" name="reject" sourceRef="exclusivegateway2" targetRef="servicetask3">
+    <sequenceFlow id="flow4" name="reject" sourceRef="exclusivegateway1" targetRef="servicetask3">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${audit=='reject'}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="flow2" sourceRef="usertask1" targetRef="exclusivegateway1"></sequenceFlow>
+    <sequenceFlow id="flow0" sourceRef="startevent1" targetRef="servicetask1"></sequenceFlow>
     <sequenceFlow id="flow1" sourceRef="servicetask1" targetRef="usertask1">
       <extensionElements>
-        <activiti:executionListener event="start" class="com.ibm.vms.TaskListener.AssignCandidateUsersListenerImp">
-          <activiti:field name="category">
-            <activiti:string><![CDATA[leave]]></activiti:string>
-          </activiti:field>
-          <activiti:field name="group">
-            <activiti:string><![CDATA[projectmanagers]]></activiti:string>
-          </activiti:field>
-        </activiti:executionListener>
+        <activiti:executionListener event="start" class="com.ibm.vms.TaskListener.TaskListenerImpl"></activiti:executionListener>
       </extensionElements>
     </sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_leaveprocess">
     <bpmndi:BPMNPlane bpmnElement="leaveprocess" id="BPMNPlane_leaveprocess">
       <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
-        <omgdc:Bounds height="30.0" width="30.0" x="37.03703692802077" y="145.0"></omgdc:Bounds>
+        <omgdc:Bounds height="30.0" width="30.0" x="37.03703692802077" y="150.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="servicetask1" id="BPMNShape_servicetask1">
-        <omgdc:Bounds height="80.0" width="100.0" x="120.0" y="120.0"></omgdc:Bounds>
+        <omgdc:Bounds height="80.0" width="100.0" x="135.0" y="125.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="servicetask2" id="BPMNShape_servicetask2">
-        <omgdc:Bounds height="80.0" width="100.0" x="870.0" y="125.0"></omgdc:Bounds>
+        <omgdc:Bounds height="80.00000000000001" width="100.00000000000023" x="870.370367808488" y="124.99999999999999"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="servicetask3" id="BPMNShape_servicetask3">
-        <omgdc:Bounds height="80.0" width="100.0" x="736.419750771641" y="0.0"></omgdc:Bounds>
+        <omgdc:Bounds height="80.0" width="100.0" x="736.419750771641" y="1.3322676295501878E-15"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="usertask1" id="BPMNShape_usertask1">
-        <omgdc:Bounds height="80.0" width="100.0" x="330.0" y="120.0"></omgdc:Bounds>
+        <omgdc:Bounds height="80.0" width="100.0" x="315.0" y="125.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="usertask2" id="BPMNShape_usertask2">
         <omgdc:Bounds height="79.99999999999999" width="100.0" x="611.1111093123427" y="124.19753038089205"></omgdc:Bounds>
@@ -89,17 +71,15 @@
         <omgdc:Bounds height="28.0" width="28.0" x="1055.555552448592" y="151.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="flow0" id="BPMNEdge_flow0">
-        <omgdi:waypoint x="67.03703692802077" y="160.0"></omgdi:waypoint>
-        <omgdi:waypoint x="120.0" y="160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="67.03703692802077" y="165.0"></omgdi:waypoint>
+        <omgdi:waypoint x="135.0" y="165.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
-        <omgdi:waypoint x="220.0" y="160.0"></omgdi:waypoint>
-        <omgdi:waypoint x="330.0" y="160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="235.0" y="165.0"></omgdi:waypoint>
+        <omgdi:waypoint x="315.0" y="165.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
-        <omgdi:waypoint x="430.0" y="160.0"></omgdi:waypoint>
-        <omgdi:waypoint x="464.99999926414023" y="160.0"></omgdi:waypoint>
-        <omgdi:waypoint x="464.99999926414023" y="165.0"></omgdi:waypoint>
+        <omgdi:waypoint x="415.0" y="165.0"></omgdi:waypoint>
         <omgdi:waypoint x="499.9999985282804" y="165.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
@@ -116,8 +96,8 @@
         <omgdi:waypoint x="766.419750771641" y="164.19753038089203"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
-        <omgdi:waypoint x="806.3003202933786" y="164.31696085915448"></omgdi:waypoint>
-        <omgdi:waypoint x="870.0" y="164.6996301385334"></omgdi:waypoint>
+        <omgdi:waypoint x="806.3006485471174" y="164.31663260541575"></omgdi:waypoint>
+        <omgdi:waypoint x="870.370367808488" y="164.70046064853616"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
         <omgdi:waypoint x="786.419750771641" y="144.19753038089203"></omgdi:waypoint>
@@ -129,7 +109,7 @@
         <omgdi:waypoint x="1069.4933311888708" y="151.00013826800998"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="sid-9120AFD5-A3A7-46B7-B799-13B58F33BBE7" id="BPMNEdge_sid-9120AFD5-A3A7-46B7-B799-13B58F33BBE7">
-        <omgdi:waypoint x="970.0" y="165.0"></omgdi:waypoint>
+        <omgdi:waypoint x="970.3703678084883" y="165.0"></omgdi:waypoint>
         <omgdi:waypoint x="1055.555552448592" y="165.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

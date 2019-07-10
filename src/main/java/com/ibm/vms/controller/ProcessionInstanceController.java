@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ibm.vms.service.ProcessInstanceService;
+import com.ibm.vms.service.impl.LeaveService;
 import com.ibm.vms.util.HttpResponseBuilder;
 import com.vms.controller.ProcessinstanceApi;
 import com.vms.model.StandardResponse;
@@ -19,9 +20,13 @@ public class ProcessionInstanceController implements ProcessinstanceApi{
 
     @Autowired
     ProcessInstanceService mProcessInstanceService;
+    
+    @Autowired
+    LeaveService leaveService;
 
 	@Override
 	public ResponseEntity<StandardResponse> createProcessInstance(@Valid StartProcessInstanceReqVO body) {
+		
 		try {
 			ProcessInstance instance = mProcessInstanceService.startProcessInstance(body.getInstanceKey(), body.getBusinessKey(), body.getVariables());
 			return HttpResponseBuilder.success(HttpStatus.OK.value(), "create instance success", instance);

@@ -48,7 +48,7 @@ public class ProcessIntanceTests {
 		StartProcessInstanceReqVO voStart = new StartProcessInstanceReqVO();
 		voStart.setApplyUserId("alex");
 		voStart.setBusinessKey("100");
-		voStart.setInstanceKey("leaveprocess");
+		voStart.setInstanceKey("leaveprocess2");
 
 		mockMvc.perform(MockMvcRequestBuilders.post("/processInstance")
 				.content(mMapper.writeValueAsString(voStart))

@@ -49,12 +49,10 @@ public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
 	public void deploy(String bpmnName, String category) {
 
 		String bpmn = "processes/" + bpmnName + ".bpmn";
-
 		repositoryService.createDeployment().name(bpmnName)// deploy name
-				.addInputStream(bpmn, this.getClass().getClassLoader().getResourceAsStream(bpmn)).category(category) // add
-																														// business
-																														// category
-				.deploy();// deploy
+		.addClasspathResource(bpmn)
+		.category(category) // ad																									// category
+		.deploy();// deploy
 	}
 
 	@Override
