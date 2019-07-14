@@ -7,14 +7,6 @@
     <serviceTask id="servicetask3" name="修改请假单状态（reject）" activiti:expression="${leaveService.changeStatus(execution,'reject')}"></serviceTask>
     <userTask id="usertask1" name="项目经理审批" activiti:assignee="#{per}">
       <extensionElements>
-        <activiti:taskListener event="create" class="com.ibm.vms.TaskListener.AssignCandidateUsersListenerImp">
-          <activiti:field name="category">
-            <activiti:string><![CDATA[leave]]></activiti:string>
-          </activiti:field>
-          <activiti:field name="group">
-            <activiti:string><![CDATA[managers]]></activiti:string>
-          </activiti:field>
-        </activiti:taskListener>
         <modeler:initiator-can-complete xmlns:modeler="http://activiti.com/modeler"><![CDATA[false]]></modeler:initiator-can-complete>
       </extensionElements>
       <multiInstanceLoopCharacteristics isSequential="false" activiti:collection="pers" activiti:elementVariable="per">
@@ -33,9 +25,6 @@
     <sequenceFlow id="flow0" sourceRef="startevent1" targetRef="servicetask1"></sequenceFlow>
     <sequenceFlow id="flow5" sourceRef="usertask2" targetRef="exclusivegateway2"></sequenceFlow>
     <sequenceFlow id="flow8" sourceRef="servicetask3" targetRef="endevent1"></sequenceFlow>
-    <sequenceFlow id="flow4" name="reject" sourceRef="exclusivegateway1" targetRef="servicetask3">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${audit=='reject'}]]></conditionExpression>
-    </sequenceFlow>
     <sequenceFlow id="flow3" name="pass" sourceRef="exclusivegateway1" targetRef="usertask2">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${audit=='pass'}]]></conditionExpression>
     </sequenceFlow>
@@ -45,15 +34,18 @@
     <sequenceFlow id="flow7" name="reject" sourceRef="exclusivegateway2" targetRef="servicetask3">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${audit=='reject'}]]></conditionExpression>
     </sequenceFlow>
+    <sequenceFlow id="flow4" name="reject" sourceRef="exclusivegateway1" targetRef="servicetask3">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${audit=='reject'}]]></conditionExpression>
+    </sequenceFlow>
     <sequenceFlow id="flow2" sourceRef="usertask1" targetRef="exclusivegateway1"></sequenceFlow>
     <sequenceFlow id="flow1" sourceRef="servicetask1" targetRef="usertask1">
       <extensionElements>
-        <activiti:executionListener event="start" class="com.ibm.vms.TaskListener.AssignCandidateUsersListenerImp">
+        <activiti:executionListener event="take" class="com.ibm.vms.TaskListener.AssignCandidateUsersListenerImp">
           <activiti:field name="category">
             <activiti:string><![CDATA[leave]]></activiti:string>
           </activiti:field>
-          <activiti:field name="group">
-            <activiti:string><![CDATA[projectmanagers]]></activiti:string>
+          <activiti:field name="type">
+            <activiti:string><![CDATA[managers]]></activiti:string>
           </activiti:field>
         </activiti:executionListener>
       </extensionElements>
@@ -98,8 +90,8 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
         <omgdi:waypoint x="430.0" y="160.0"></omgdi:waypoint>
-        <omgdi:waypoint x="464.99999926414023" y="160.0"></omgdi:waypoint>
-        <omgdi:waypoint x="464.99999926414023" y="165.0"></omgdi:waypoint>
+        <omgdi:waypoint x="464.0" y="160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="464.0" y="165.0"></omgdi:waypoint>
         <omgdi:waypoint x="499.9999985282804" y="165.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
