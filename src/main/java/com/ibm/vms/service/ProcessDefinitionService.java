@@ -4,6 +4,9 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.activiti.engine.repository.Deployment;
+import org.activiti.engine.repository.ProcessDefinition;
+
+import com.ibm.vms.models.ProcessDefinitionmodel;
 
 public interface ProcessDefinitionService {
 	
@@ -19,13 +22,15 @@ public interface ProcessDefinitionService {
     /***
      * 查询部署列表
      */
-    public List<Deployment> deploymentQuery();
+    public List<ProcessDefinitionmodel> deploymentQuery();
     /***
      * 根据部署ID查询部署
      */
-    public Deployment deploymentQuerybyid(String deploymentId);
+    public ProcessDefinitionmodel deploymentQuerybyid(String deploymentId);
     /***
      * 根据部署ID删除部署
      */
     public void deleteDeploymentbyid(String deploymentId);
+    
+    public List queryrecalltask(String deploymentId);
 }

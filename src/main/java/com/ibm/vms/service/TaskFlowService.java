@@ -3,6 +3,9 @@ package com.ibm.vms.service;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.form.FormProperty;
+import org.activiti.engine.impl.form.TaskFormDataImpl;
+
 public interface TaskFlowService {
 	
 	 /***
@@ -12,7 +15,7 @@ public interface TaskFlowService {
      * @param candidateGroup 候选用户组
      * @return
      */
-    public List queryTask(String assignee, String candidateUser, String candidateGroup, int firstResult, int maxResults);
+    public List queryTask(String owner, String assignee, String candidateUser, String candidateGroup, int firstResult, int maxResults);
 
 
     /***
@@ -24,20 +27,13 @@ public interface TaskFlowService {
 
 
     /***
-     * 根据实例ID查询任务审核历史
-     * @param processInstanceId 实例ID
-     * @return
-     */
-    public List queryTaskHistory(String processInstanceId);
-
-    /***
      * 完成任务
      * @param taskId 任务id
      * @param assignee 分配到任务的人
      * @param variables 表单参数信息
      * @param param 返回值
      */
-    public void completeTask(String taskId, String assignee, String comment, Map<String, Object> variables, Map<String, Object> param);
+    public String completeTask(String taskId, String assignee, String comment, Map<String, Object> variables, Map<String, Object> param);
 
     /****
      * 任务指派
@@ -46,6 +42,13 @@ public interface TaskFlowService {
      */
     public void claimTask(String taskId, String assignee);
 
+    /****
+     * 任务指派
+     * @param taskId
+     * @param assignee
+     */
+    public void unclaimTask(String taskId);
+    
     public void deleteTask(String taskId);
 
 
@@ -71,5 +74,26 @@ public interface TaskFlowService {
      * @param returnStart 是否返回到起点
      */
     public void rejectTask(String taskId, String assignee, String comment, boolean returnStart);
+    /***
+     * 转签任务
+     * @param taskId 当前节点
+     * @param userid 转签对象
+     */
+    public void delegateTask(String taskId, String userId);
+    /***
+     * 添加CandidateUser
+     * @param taskId 当前节点
+     * @param userid CandidateUser对象
+     */
+    public void addCandidateUser(String taskId, String userId);
+    /***
+     * 查看CandidateUsers
+     * @param taskId 当前节点
 
+     */
+    public void getTaskCandidate(String taskId);
+    
+    public void withdraw(String taskId,String processId);
+    
+    public List<FormProperty> getforminfo(String taskId);
 }

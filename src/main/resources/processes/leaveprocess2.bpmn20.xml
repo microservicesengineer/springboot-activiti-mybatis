@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/processdef">
+  <process id="leaveprocess" name="请假流程" isExecutable="true">
+    <startEvent id="startevent1" name="start"></startEvent>
+    <serviceTask id="servicetask1" name="修改请假单状态（ing）" activiti:expression="${serviceTask.changeStatus(execution,'ing')}"></serviceTask>
+    <serviceTask id="servicetask3" name="修改请假单状态（pass）" activiti:expression="${serviceTask.changeStatus(execution,'pass')}"></serviceTask>
+    <serviceTask id="servicetask4" name="修改请假单状态（reject）" activiti:expression="${serviceTask.changeStatus(execution,'reject')}"></serviceTask>
+    <userTask id="usertask1" name="项目经理审批" activiti:assignee="#{per}">
+      <extensionElements>
+        <modeler:initiator-can-complete xmlns:modeler="http://activiti.com/modeler"><![CDATA[false]]></modeler:initiator-can-complete>
+      </extensionElements>
+      <multiInstanceLoopCharacteristics isSequential="false" activiti:collection="pers" activiti:elementVariable="per">
+        <completionCondition>${nrOfCompletedInstances/nrOfInstances == 1}</completionCondition>
+      </multiInstanceLoopCharacteristics>
+    </userTask>
+    <userTask id="usertask2" name="人事经理审批">
+      <extensionElements>
+        <activiti:taskListener event="create" class="com.ibm.vms.TaskListener.TaskListenerImpl2"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="exclusivegateway1" name="exclusivegateway1"></exclusiveGateway>
+    <exclusiveGateway id="exclusivegateway2" name="exclusivegateway2"></exclusiveGateway>
+    <endEvent id="endevent1" name="end"></endEvent>
+    <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="servicetask1"></sequenceFlow>
+    <sequenceFlow id="flow4" sourceRef="usertask1" targetRef="exclusivegateway1"></sequenceFlow>
+    <sequenceFlow id="flow5" name="pass" sourceRef="exclusivegateway1" targetRef="usertask2">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${audit=='pass'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow7" sourceRef="usertask2" targetRef="exclusivegateway2"></sequenceFlow>
+    <sequenceFlow id="flow6" name="reject" sourceRef="exclusivegateway1" targetRef="servicetask4">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${audit=='reject'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow9" name="reject" sourceRef="exclusivegateway2" targetRef="servicetask4">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${audit=='reject'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow8" name="pass" sourceRef="exclusivegateway2" targetRef="servicetask3">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${audit=='pass'}]]></conditionExpression>
+    </sequenceFlow>
+    <serviceTask id="servicetask5" name="显示请假成功" activiti:delegateExpression="${myDelegate}"></serviceTask>
+    <sequenceFlow id="sid-934820B7-E2E2-4220-AA24-E14C368914AC" sourceRef="servicetask3" targetRef="servicetask5"></sequenceFlow>
+    <sequenceFlow id="sid-B24B47A9-727D-404F-8F4C-4960607DF3AA" sourceRef="servicetask5" targetRef="endevent1"></sequenceFlow>
+    <serviceTask id="servicetask6" name="显示请假失败" activiti:class="com.ibm.vms.delegate.JavaClass"></serviceTask>
+    <sequenceFlow id="sid-F3C0679A-EE29-4F99-9C48-2007B2210135" sourceRef="servicetask4" targetRef="servicetask6"></sequenceFlow>
+    <sequenceFlow id="sid-4537417D-DB79-4856-888E-1F2612551020" sourceRef="servicetask6" targetRef="endevent1"></sequenceFlow>
+    <sequenceFlow id="flow2" sourceRef="servicetask1" targetRef="usertask1">
+      <extensionElements>
+        <activiti:executionListener event="start" class="com.ibm.vms.TaskListener.TaskListenerImpl1"></activiti:executionListener>
+      </extensionElements>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_leaveprocess">
+    <bpmndi:BPMNPlane bpmnElement="leaveprocess" id="BPMNPlane_leaveprocess">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="30.0" width="30.0" x="0.0" y="149.19753038089203"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="servicetask1" id="BPMNShape_servicetask1">
+        <omgdc:Bounds height="80.0" width="100.0" x="60.0" y="125.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="servicetask3" id="BPMNShape_servicetask3">
+        <omgdc:Bounds height="80.0" width="100.00000000000023" x="870.0" y="124.19753038089203"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="servicetask4" id="BPMNShape_servicetask4">
+        <omgdc:Bounds height="80.0" width="100.0" x="778.086418419454" y="0.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask1" id="BPMNShape_usertask1">
+        <omgdc:Bounds height="80.0" width="100.0" x="375.0" y="124.19753038089203"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask2" id="BPMNShape_usertask2">
+        <omgdc:Bounds height="79.99999999999999" width="100.0" x="652.7777769601557" y="124.19753038089205"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
+        <omgdc:Bounds height="40.0" width="40.0" x="541.6666661760935" y="145.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway2" id="BPMNShape_exclusivegateway2">
+        <omgdc:Bounds height="40.0" width="40.0" x="808.086418419454" y="144.19753038089203"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="28.0" width="28.0" x="1140.0" y="151.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="servicetask5" id="BPMNShape_servicetask5">
+        <omgdc:Bounds height="80.0" width="100.0" x="1005.0" y="125.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="servicetask6" id="BPMNShape_servicetask6">
+        <omgdc:Bounds height="80.0" width="100.0" x="1005.0" y="0.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-F3C0679A-EE29-4F99-9C48-2007B2210135" id="BPMNEdge_sid-F3C0679A-EE29-4F99-9C48-2007B2210135">
+        <omgdi:waypoint x="878.086418419454" y="40.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1005.0" y="40.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="29.999464883908093" y="164.32423159007323"></omgdi:waypoint>
+        <omgdi:waypoint x="60.0" y="164.57764756889054"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="160.0" y="164.87262386998287"></omgdi:waypoint>
+        <omgdi:waypoint x="375.0" y="164.32490651090916"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="475.0" y="164.49111682796098"></omgdi:waypoint>
+        <omgdi:waypoint x="541.7834152360866" y="164.88325094000686"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-934820B7-E2E2-4220-AA24-E14C368914AC" id="BPMNEdge_sid-934820B7-E2E2-4220-AA24-E14C368914AC">
+        <omgdi:waypoint x="970.0000000000002" y="164.49474135093203"></omgdi:waypoint>
+        <omgdi:waypoint x="1005.0" y="164.70278902996"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="581.5535734591275" y="164.88690728303405"></omgdi:waypoint>
+        <omgdi:waypoint x="652.7777769601557" y="164.48187001036882"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-4537417D-DB79-4856-888E-1F2612551020" id="BPMNEdge_sid-4537417D-DB79-4856-888E-1F2612551020">
+        <omgdi:waypoint x="1105.0" y="40.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1154.0" y="40.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1154.0" y="151.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="561.7198577435299" y="145.05319156743644"></omgdi:waypoint>
+        <omgdi:waypoint x="562.0" y="40.0"></omgdi:waypoint>
+        <omgdi:waypoint x="778.086418419454" y="40.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-B24B47A9-727D-404F-8F4C-4960607DF3AA" id="BPMNEdge_sid-B24B47A9-727D-404F-8F4C-4960607DF3AA">
+        <omgdi:waypoint x="1105.0" y="165.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1140.0" y="165.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="752.7777769601557" y="164.19753038089203"></omgdi:waypoint>
+        <omgdi:waypoint x="808.086418419454" y="164.19753038089203"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow8" id="BPMNEdge_flow8">
+        <omgdi:waypoint x="848.086418419454" y="164.19753038089203"></omgdi:waypoint>
+        <omgdi:waypoint x="870.0" y="164.19753038089203"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow9" id="BPMNEdge_flow9">
+        <omgdi:waypoint x="828.086418419454" y="144.19753038089203"></omgdi:waypoint>
+        <omgdi:waypoint x="828.086418419454" y="80.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

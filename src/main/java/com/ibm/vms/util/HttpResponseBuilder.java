@@ -3,7 +3,8 @@ package com.ibm.vms.util;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.vms.model.StandardResponse;
+import com.ibm.vms.models.StandardResponse;
+
 
 public class HttpResponseBuilder {
 	

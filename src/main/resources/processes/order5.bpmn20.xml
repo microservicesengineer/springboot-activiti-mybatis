@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/processdef">
+  <process id="orderprocess" name="业务" isExecutable="true">
+    <startEvent id="StartEvent1" name="开始">
+      <extensionElements>
+        <activiti:formProperty id="startDate" name="请假开始日期" type="date" datePattern="yyyy-MM-dd" required="true"></activiti:formProperty>
+        <activiti:formProperty id="endDate" name="请假结束日期" type="date" datePattern="yyyy-MM-dd" required="true"></activiti:formProperty>
+        <activiti:formProperty id="reason" name="请假原因" type="string" required="true"></activiti:formProperty>
+      </extensionElements>
+    </startEvent>
+    <serviceTask id="servicetask1" name="更新状态为new" activiti:expression="${serviceTask.changeStatus(execution,'new')}"></serviceTask>
+    <userTask id="usertask1" name="开始分批/代理" activiti:assignee="#{user}" activiti:formKey="form1">
+      <documentation>recall</documentation>
+      <extensionElements>
+        <activiti:formProperty id="outcome" name="分批处理结果" type="string"></activiti:formProperty>
+        <activiti:formProperty id="delegatestatus" name="代理状态" type="boolean" required="true"></activiti:formProperty>
+        <activiti:formProperty id="delegateassignee" name="代理人" type="string"></activiti:formProperty>
+        <modeler:initiator-can-complete xmlns:modeler="http://activiti.com/modeler"><![CDATA[false]]></modeler:initiator-can-complete>
+      </extensionElements>
+    </userTask>
+    <serviceTask id="servicetask2" name="更新状态为process" activiti:expression="${serviceTask.changeStatus(execution,'process')}"></serviceTask>
+    <userTask id="usertask4" name="manager审批" activiti:assignee="#{manager}">
+      <extensionElements>
+        <activiti:formProperty id="audit" name="审批结果" type="string" required="true"></activiti:formProperty>
+        <modeler:initiator-can-complete xmlns:modeler="http://activiti.com/modeler"><![CDATA[false]]></modeler:initiator-can-complete>
+      </extensionElements>
+      <multiInstanceLoopCharacteristics isSequential="false" activiti:collection="managers" activiti:elementVariable="manager">
+        <completionCondition>${nrOfCompletedInstances/nrOfInstances == 1}</completionCondition>
+      </multiInstanceLoopCharacteristics>
+    </userTask>
+    <serviceTask id="servicetask4" name="更新状态为reject" activiti:expression="${serviceTask.changeStatus(execution,'reject')}"></serviceTask>
+    <serviceTask id="servicetask3" name="更新状态为approved" activiti:expression="${serviceTask.changeStatus(execution,'approved')}"></serviceTask>
+    <exclusiveGateway id="gateway2" name="是否通过"></exclusiveGateway>
+    <endEvent id="endevent1" name="结束"></endEvent>
+    <userTask id="usertask3" name="完成分批" activiti:assignee="#{user}">
+      <extensionElements>
+        <activiti:taskListener event="create" class="com.ibm.vms.TaskListener.TaskListenerImpl2"></activiti:taskListener>
+        <modeler:initiator-can-complete xmlns:modeler="http://activiti.com/modeler"><![CDATA[false]]></modeler:initiator-can-complete>
+      </extensionElements>
+    </userTask>
+    <userTask id="usertask2" name="代理开始分批" activiti:assignee="#{user}">
+      <extensionElements>
+        <activiti:formProperty id="outcome" name="分批处理结果" type="string" required="true"></activiti:formProperty>
+        <activiti:taskListener event="create" class="com.ibm.vms.TaskListener.TaskListenerImpl2"></activiti:taskListener>
+        <modeler:initiator-can-complete xmlns:modeler="http://activiti.com/modeler"><![CDATA[false]]></modeler:initiator-can-complete>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="gateway1" name="是否代理"></exclusiveGateway>
+    <sequenceFlow id="flow1" sourceRef="StartEvent1" targetRef="servicetask1"></sequenceFlow>
+    <sequenceFlow id="flow2" sourceRef="servicetask1" targetRef="usertask1"></sequenceFlow>
+    <sequenceFlow id="flow3" sourceRef="usertask1" targetRef="gateway1"></sequenceFlow>
+    <sequenceFlow id="flow5" name="delegatestatus==true" sourceRef="gateway1" targetRef="usertask2">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${delegatestatus==true}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow4" name="delegatestatus==false" sourceRef="gateway1" targetRef="servicetask2">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${delegatestatus==false}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow6" sourceRef="usertask2" targetRef="servicetask2"></sequenceFlow>
+    <sequenceFlow id="flow7" sourceRef="servicetask2" targetRef="usertask3"></sequenceFlow>
+    <sequenceFlow id="flow8" sourceRef="usertask3" targetRef="usertask4"></sequenceFlow>
+    <sequenceFlow id="flow9" sourceRef="usertask4" targetRef="gateway2"></sequenceFlow>
+    <sequenceFlow id="flow11" name="reject" sourceRef="gateway2" targetRef="servicetask4">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${audit=='reject'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow13" sourceRef="servicetask4" targetRef="usertask1"></sequenceFlow>
+    <sequenceFlow id="flow12" sourceRef="servicetask3" targetRef="endevent1"></sequenceFlow>
+    <sequenceFlow id="flow10" name="pass" sourceRef="gateway2" targetRef="servicetask3">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${audit=='pass'}]]></conditionExpression>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_orderprocess">
+    <bpmndi:BPMNPlane bpmnElement="orderprocess" id="BPMNPlane_orderprocess">
+      <bpmndi:BPMNShape bpmnElement="StartEvent1" id="BPMNShape_StartEvent1">
+        <omgdc:Bounds height="30.0" width="30.0" x="0.0" y="199.22929513766988"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="servicetask1" id="BPMNShape_servicetask1">
+        <omgdc:Bounds height="80.0" width="100.0" x="108.58631213678103" y="174.22929513766988"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask1" id="BPMNShape_usertask1">
+        <omgdc:Bounds height="80.0" width="100.0" x="313.61273124780575" y="174.2292951376699"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="servicetask2" id="BPMNShape_servicetask2">
+        <omgdc:Bounds height="79.99999999999997" width="99.99999999999989" x="735.8730800505193" y="174.2292951376699"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask4" id="BPMNShape_usertask4">
+        <omgdc:Bounds height="80.0" width="99.99999999999989" x="979.642599071081" y="383.1696237775427"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="servicetask4" id="BPMNShape_servicetask4">
+        <omgdc:Bounds height="80.0" width="100.0" x="313.61273124780575" y="383.1696237775427"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="servicetask3" id="BPMNShape_servicetask3">
+        <omgdc:Bounds height="80.0" width="100.0" x="527.1895302560264" y="581.2754502922259"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="gateway2" id="BPMNShape_gateway2">
+        <omgdc:Bounds height="40.0" width="40.0" x="557.1895302560263" y="403.1696237775427"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="28.0" width="28.0" x="771.8730800505194" y="607.275450292226"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask3" id="BPMNShape_usertask3">
+        <omgdc:Bounds height="80.0" width="100.00000000000011" x="979.6425990710812" y="174.22929513766988"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask2" id="BPMNShape_usertask2">
+        <omgdc:Bounds height="80.0" width="99.99999999999989" x="527.1895302560264" y="0.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="gateway1" id="BPMNShape_gateway1">
+        <omgdc:Bounds height="40.0" width="40.0" x="557.1895302560264" y="194.22929513766988"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow13" id="BPMNEdge_flow13">
+        <omgdi:waypoint x="363.61273124780575" y="383.1696237775427"></omgdi:waypoint>
+        <omgdi:waypoint x="363.61273124780575" y="254.2292951376699"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="30.0" y="214.22929513766988"></omgdi:waypoint>
+        <omgdi:waypoint x="108.58631213678103" y="214.22929513766988"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="208.58631213678103" y="214.22929513766988"></omgdi:waypoint>
+        <omgdi:waypoint x="313.61273124780575" y="214.2292951376699"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="413.61273124780575" y="214.2292951376699"></omgdi:waypoint>
+        <omgdi:waypoint x="557.1895302560264" y="214.22929513766988"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="597.1895302560264" y="214.22929513766988"></omgdi:waypoint>
+        <omgdi:waypoint x="735.8730800505193" y="214.2292951376699"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="577.1895302560264" y="194.2292951376699"></omgdi:waypoint>
+        <omgdi:waypoint x="577.1895302560263" y="80.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="627.1895302560263" y="40.0"></omgdi:waypoint>
+        <omgdi:waypoint x="785.0" y="40.0"></omgdi:waypoint>
+        <omgdi:waypoint x="785.672636135544" y="174.2292951376699"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="835.8730800505192" y="214.2292951376699"></omgdi:waypoint>
+        <omgdi:waypoint x="979.6425990710812" y="214.22929513766988"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow10" id="BPMNEdge_flow10">
+        <omgdi:waypoint x="577.1895302560263" y="443.1696237775427"></omgdi:waypoint>
+        <omgdi:waypoint x="577.1895302560264" y="581.2754502922259"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow8" id="BPMNEdge_flow8">
+        <omgdi:waypoint x="1029.6425990710813" y="254.22929513766988"></omgdi:waypoint>
+        <omgdi:waypoint x="1029.642599071081" y="383.1696237775427"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow11" id="BPMNEdge_flow11">
+        <omgdi:waypoint x="557.1895302560263" y="423.1696237775427"></omgdi:waypoint>
+        <omgdi:waypoint x="413.61273124780575" y="423.1696237775427"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow9" id="BPMNEdge_flow9">
+        <omgdi:waypoint x="979.642599071081" y="423.1696237775427"></omgdi:waypoint>
+        <omgdi:waypoint x="597.1895302560263" y="423.1696237775427"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow12" id="BPMNEdge_flow12">
+        <omgdi:waypoint x="627.1895302560264" y="621.2754502922259"></omgdi:waypoint>
+        <omgdi:waypoint x="771.8730800505194" y="621.275450292226"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

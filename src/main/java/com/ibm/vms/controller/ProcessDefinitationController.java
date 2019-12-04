@@ -1,6 +1,7 @@
 package com.ibm.vms.controller;
 
 import java.io.InputStream;
+import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -14,10 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ibm.vms.api.ProcessdefinitionApi;
+import com.ibm.vms.models.ProcessDefinitionmodel;
+import com.ibm.vms.models.StandardResponse;
 import com.ibm.vms.service.ProcessDefinitionService;
 import com.ibm.vms.util.HttpResponseBuilder;
-import com.vms.controller.ProcessdefinitionApi;
-import com.vms.model.StandardResponse;
 
 @RestController
 public class ProcessDefinitationController implements ProcessdefinitionApi {
@@ -33,7 +35,13 @@ public class ProcessDefinitationController implements ProcessdefinitionApi {
 	@Override
 	public ResponseEntity<StandardResponse> deleteProcessDefinitionById(String id) {
 		// TODO Auto-generated method stub
-		return ProcessdefinitionApi.super.deleteProcessDefinitionById(id);
+		mProcessDefinitionService.deleteDeploymentbyid(id);
+		try {
+			mProcessDefinitionService.deleteDeploymentbyid(id);
+			return HttpResponseBuilder.success(HttpStatus.OK.value(), "delete deploy success", null);
+		} catch(Exception e) {
+			return HttpResponseBuilder.fail(HttpStatus.BAD_REQUEST.value(), e.getMessage(), null);
+		}
 	}
 
 	@Override
@@ -76,13 +84,36 @@ public class ProcessDefinitationController implements ProcessdefinitionApi {
 	@Override
 	public ResponseEntity<StandardResponse> getProcessDefinitionById(String id) {
 		// TODO Auto-generated method stub
-		return ProcessdefinitionApi.super.getProcessDefinitionById(id);
+     try {
+    	 ProcessDefinitionmodel ProcessDefinitionmodel = mProcessDefinitionService.deploymentQuerybyid(id);
+		return HttpResponseBuilder.success(HttpStatus.OK.value(), "fetch task list success", ProcessDefinitionmodel);
+	} catch (Exception e) {
+		return HttpResponseBuilder.fail(HttpStatus.BAD_REQUEST.value(), e.getMessage(), null);
+	}
 	}
 
 	@Override
 	public ResponseEntity<StandardResponse> getProcessDefinitionDeploymentList() {
-		// TODO Auto-generated method stub
-		return ProcessdefinitionApi.super.getProcessDefinitionDeploymentList();
+	     try {
+	    	 List<ProcessDefinitionmodel> list = mProcessDefinitionService.deploymentQuery();
+			return HttpResponseBuilder.success(HttpStatus.OK.value(), "fetch task list success", list);
+		} catch (Exception e) {
+			return HttpResponseBuilder.fail(HttpStatus.BAD_REQUEST.value(), e.getMessage(), null);
+		}
 	}
+	
+
+	@Override
+	public ResponseEntity<StandardResponse> queryrecall(String id) {
+		// TODO Auto-generated method stub
+	     try {
+				 List data = mProcessDefinitionService.queryrecalltask(id);
+			return HttpResponseBuilder.success(HttpStatus.OK.value(), "fetch task list success", data);
+		} catch (Exception e) {
+			return HttpResponseBuilder.fail(HttpStatus.BAD_REQUEST.value(), e.getMessage(), null);
+		}
+	}
+
+
 
 }

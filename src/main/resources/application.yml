@@ -1,12 +1,13 @@
 server:
   port: 1855
-
+mybatis:
+    mapperLocations: classpath:mapper/*.xml
 spring:
   datasource:
     driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/vms?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/vms?useSSL=false&serverTimezone=UTC
     username: root
-    password: passw0rd4vms
+    password: ibm11ibm
   jpa:
     hibernate:
       ddl-auto: update
@@ -19,5 +20,7 @@ spring:
   activiti:
     database-schema-update: true
     check-process-definitions: false
+    activiti5CompatibilityEnabled: true
   main: 
     allow-bean-definition-overriding: true
+  

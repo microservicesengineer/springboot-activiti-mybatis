@@ -3,14 +3,14 @@ package com.ibm.vms.entity.db;
 import java.util.ArrayList;
 import java.util.List;
 
-public class leave_infoExample {
+public class order_infoExample {
     protected String orderByClause;
 
     protected boolean distinct;
 
     protected List<Criteria> oredCriteria;
 
-    public leave_infoExample() {
+    public order_infoExample() {
         oredCriteria = new ArrayList<Criteria>();
     }
 
@@ -241,146 +241,6 @@ public class leave_infoExample {
 
         public Criteria andStatusNotBetween(String value1, String value2) {
             addCriterion("status not between", value1, value2, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andLeavemsgIsNull() {
-            addCriterion("leaveMsg is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andLeavemsgIsNotNull() {
-            addCriterion("leaveMsg is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andLeavemsgEqualTo(String value) {
-            addCriterion("leaveMsg =", value, "leavemsg");
-            return (Criteria) this;
-        }
-
-        public Criteria andLeavemsgNotEqualTo(String value) {
-            addCriterion("leaveMsg <>", value, "leavemsg");
-            return (Criteria) this;
-        }
-
-        public Criteria andLeavemsgGreaterThan(String value) {
-            addCriterion("leaveMsg >", value, "leavemsg");
-            return (Criteria) this;
-        }
-
-        public Criteria andLeavemsgGreaterThanOrEqualTo(String value) {
-            addCriterion("leaveMsg >=", value, "leavemsg");
-            return (Criteria) this;
-        }
-
-        public Criteria andLeavemsgLessThan(String value) {
-            addCriterion("leaveMsg <", value, "leavemsg");
-            return (Criteria) this;
-        }
-
-        public Criteria andLeavemsgLessThanOrEqualTo(String value) {
-            addCriterion("leaveMsg <=", value, "leavemsg");
-            return (Criteria) this;
-        }
-
-        public Criteria andLeavemsgLike(String value) {
-            addCriterion("leaveMsg like", value, "leavemsg");
-            return (Criteria) this;
-        }
-
-        public Criteria andLeavemsgNotLike(String value) {
-            addCriterion("leaveMsg not like", value, "leavemsg");
-            return (Criteria) this;
-        }
-
-        public Criteria andLeavemsgIn(List<String> values) {
-            addCriterion("leaveMsg in", values, "leavemsg");
-            return (Criteria) this;
-        }
-
-        public Criteria andLeavemsgNotIn(List<String> values) {
-            addCriterion("leaveMsg not in", values, "leavemsg");
-            return (Criteria) this;
-        }
-
-        public Criteria andLeavemsgBetween(String value1, String value2) {
-            addCriterion("leaveMsg between", value1, value2, "leavemsg");
-            return (Criteria) this;
-        }
-
-        public Criteria andLeavemsgNotBetween(String value1, String value2) {
-            addCriterion("leaveMsg not between", value1, value2, "leavemsg");
-            return (Criteria) this;
-        }
-
-        public Criteria andTaskidIsNull() {
-            addCriterion("taskId is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTaskidIsNotNull() {
-            addCriterion("taskId is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTaskidEqualTo(String value) {
-            addCriterion("taskId =", value, "taskid");
-            return (Criteria) this;
-        }
-
-        public Criteria andTaskidNotEqualTo(String value) {
-            addCriterion("taskId <>", value, "taskid");
-            return (Criteria) this;
-        }
-
-        public Criteria andTaskidGreaterThan(String value) {
-            addCriterion("taskId >", value, "taskid");
-            return (Criteria) this;
-        }
-
-        public Criteria andTaskidGreaterThanOrEqualTo(String value) {
-            addCriterion("taskId >=", value, "taskid");
-            return (Criteria) this;
-        }
-
-        public Criteria andTaskidLessThan(String value) {
-            addCriterion("taskId <", value, "taskid");
-            return (Criteria) this;
-        }
-
-        public Criteria andTaskidLessThanOrEqualTo(String value) {
-            addCriterion("taskId <=", value, "taskid");
-            return (Criteria) this;
-        }
-
-        public Criteria andTaskidLike(String value) {
-            addCriterion("taskId like", value, "taskid");
-            return (Criteria) this;
-        }
-
-        public Criteria andTaskidNotLike(String value) {
-            addCriterion("taskId not like", value, "taskid");
-            return (Criteria) this;
-        }
-
-        public Criteria andTaskidIn(List<String> values) {
-            addCriterion("taskId in", values, "taskid");
-            return (Criteria) this;
-        }
-
-        public Criteria andTaskidNotIn(List<String> values) {
-            addCriterion("taskId not in", values, "taskid");
-            return (Criteria) this;
-        }
-
-        public Criteria andTaskidBetween(String value1, String value2) {
-            addCriterion("taskId between", value1, value2, "taskid");
-            return (Criteria) this;
-        }
-
-        public Criteria andTaskidNotBetween(String value1, String value2) {
-            addCriterion("taskId not between", value1, value2, "taskid");
             return (Criteria) this;
         }
     }
